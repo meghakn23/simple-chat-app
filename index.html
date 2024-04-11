@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WebSocket Chat App</title>
+</head>
+<body>
+    <div style="display: flex; justify-content: space-between;">
+        <div style="flex: 1;">
+            <h2>Incoming Messages</h2>
+            <div id="incomingMessages"></div>
+        </div>
+        <div style="flex: 1;">
+            <h2>Outgoing Messages</h2>
+            <input type="text" id="messageInput" placeholder="Type your message">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <script>
+        const ws = new WebSocket('ws://localhost:3000');
+
+        // Event handler for incoming messages
+        ws.onmessage = function(event) {
+            const messageDiv = document.createElement('div');
+            messageDiv.textContent = event.data;
+            document.getElementById('incomingMessages').appendChild(messageDiv);
+        };
+
+        // Function to send a message
+        function sendMessage() {
+            const messageInput = document.getElementById('messageInput');
+            const message = messageInput.value.trim();
+            if (message !== '') {
+                ws.send(message);
+                messageInput.value = '';
+                
+                // Append sent message to outgoing messages section
+                const sentMessageDiv = document.createElement('div');
+                sentMessageDiv.textContent = `You: ${message}`;
+                document.getElementById('incomingMessages').appendChild(sentMessageDiv);
+            }
+        }
+    </script>
+</body>
+</html>
